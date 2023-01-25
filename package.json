@@ -1,0 +1,26 @@
+{
+  "name": "labecommerce-backend",
+  "version": "1.0.0",
+  "description": "\"\"\u001b[DÉ o primeiro projeto do back-end, onde praticamos toda a base de criação de uma API vinculada a um banco de dados real.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "clear && node ./index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amclptc/projeto-labecommerce-backend.git"
+  },
+  "keywords": [
+    "\"backend\"",
+    "\"API\"",
+    "\"banco-de-dados\""
+  ],
+  "author": "amclptc@gmail.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/amclptc/projeto-labecommerce-backend/issues"
+  },
+  "homepage": "https://github.com/amclptc/projeto-labecommerce-backend#readme"
+}
