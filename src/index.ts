@@ -119,4 +119,79 @@ app.post("/purchases",(req: Request, res: Response) => {
     res.status(201).send("Compra realizada com sucesso");
 })
 
+//Labenu: continuar criando endpoints para automatizar a manipulação dos dados.
+//Get Products by id:
+app.get("/products/:id", (req: Request, res: Response) => {
+    const id = req.params.id as string
+    const result = products.find(product => product.id === id);
+    res.status(200).send(result);
+});
 
+//Get User Purchases by User id:
+app.get("/users/:id/purchases", (req: Request, res: Response) => {
+    const id = req.params.id as string;
+    const result = purchases.filter(purchase => purchase.userId === id);
+    res.status(200).send(result);
+});
+
+
+//Labenu: praticar o método DELETE, criando endpoints para automatizar a manipulação dos dados.
+//Delete User by id:
+app.delete("/users/:id", (req: Request, res: Response) => {
+    const id = req.params.id as string;
+    const userIndex = users.findIndex((user) => user.id === id);
+    if(userIndex >= 0) {
+        users.splice(userIndex, 1)
+    };
+    res.status(200).send("User apagado com sucesso!")
+    console.log(id)
+});
+
+//Delete Product by id:
+app.delete("/products/:id", (req: Request, res: Response) => {
+    const id = req.params.id as string;
+    const productIndex = products.findIndex((product) => product.id === id);
+    if(productIndex >= 0){
+        products.splice(productIndex, 1)
+    }
+    res.status(200).send("Produto apagado com sucesso!")
+    console.log(id)
+});
+
+
+//Labenu: praticar o método PUT, criando endpoints para automatizar a manipulação dos dados.
+//Edit User by id:
+app.put("/users/:id", (req: Request, res: Response) => {
+    const id = req.params.id as string | undefined;
+    const email = req.body.email as string | undefined;
+    const password = req.body.password as string | undefined;
+
+    const user = users.find((user) => user.id === id)
+
+    if(user) {
+        user.id = id || user.id;
+        user.email = email || user.email;
+        user.password = password || user.password;
+    }
+
+    res.status(200).send("Cadastro atualizado com sucesso")
+})
+
+////Edit Product by id:
+app.put("/products/:id", (req: Request, res: Response) => {
+    const id = req.params.id as string | undefined;
+    const name = req.body.name as string | undefined;
+    const price = req.body.price as number | undefined;
+    const category = req.body.category as DISCO_CATEGORIES | undefined;
+    
+    const product = products.find((product) => product.id === id);
+
+    if(product){
+        product.id = id || product.id;
+        product.name = name || product.name;
+        product.price = price || product.price;
+        product.category = category || product.category;
+    }
+
+    res.status(200).send("Produto atualizado com sucesso");
+})
