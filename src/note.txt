@@ -1,6 +1,4 @@
-Alterações e implementações:
-- refatorei a propriedade category do const product para typar com ENUM;
-- desenvolvi funções para funcionalidades que dialogam com a minha data base;
+
 
 SOLO:
 The College Dropout
@@ -23,3 +21,16 @@ Get Well Soon
 I'm Good...
 Welcome to Kanye's Soul Mix Show
 Can't Tell Me Nothing
+
+
+
+My Beautiful Dark Twisted Fantasy
+The College Dropout
+Late Registration
+The Life of Pablo
+Graduation
+Yeezus
+Ye
+808s & Heartbreak
+Donda
+Jesus is King
