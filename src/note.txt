@@ -1,6 +1,8 @@
 Alterações e implementações:
 - configurei a conexão dos arquivos sql;
-- criei a tabela users;
+- criei e populei a tabela users;
+- criei e populei a tabela products;
+
 
 
 Problemas nas requisições:
@@ -8,6 +10,10 @@ GetUserPurchasesById - quando pesquiso um id de usuário que não existe, não d
 DeleteUserById - o usuário é deletado mas aparece a mensagem de que ele não foi cadastrado.
 DeleteProductById - o usuário é deletado mas aparece a mensagem de que ele não foi cadastrado.
 PostNewProduct - reclama quando ponho price como number mas funciona quando coloco como string.
+
+Problemas com SQL:
+- Não consegui o Get All Products versão 2 que retorna os produtos com preços dentro do intervalo mockado em ordem crescente.
+
 
 SOLO:
 The College Dropout

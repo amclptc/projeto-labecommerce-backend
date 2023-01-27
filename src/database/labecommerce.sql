@@ -7,8 +7,6 @@ CREATE TABLE users(
     password TEXT NOT NULL
 );
 
-SELECT * FROM users;
-
 --Labenu: populando a tabela de pessoas usuárias:
 INSERT INTO users (id, email, password)
 VALUES 
@@ -24,8 +22,6 @@ CREATE TABLE products(
     category TEXT NOT NULL
 );
 
-SELECT * FROM products;
-
 --Labenu: populando a tabela de produtos:
 INSERT INTO products(id, name, price, category)
 VALUES
@@ -35,4 +31,55 @@ VALUES
 ("d004", "808s & Heartbreak", 5.268, "Solo"),
 ("d005", "My Beautiful Dark Twisted Fantasy", 2.023, "Solo")
 
+--Get All Users
+SELECT * FROM users;
 
+--Get All Products
+SELECT * FROM products;
+
+--Search Product by name
+SELECT * FROM products
+WHERE name = x;
+
+--Create User
+INSERT INTO users(id, name, price, category)
+VALUES (x);
+
+--Create Product
+INSERT INTO products(id, name, price, category)
+VALUES (X);
+
+--Get Products by id
+SELECT * FROM products
+WHERE id = x;
+
+--Delete User by id
+DELETE FROM users
+WHERE id = x;
+
+--Delete Product by id
+DELETE FROM products
+WHERE id = x;
+
+--Edit User by id
+UPDATE users
+SET x = "x"
+WHERE id = x;
+
+--Edit Product by id
+UPDATE products
+SET x = "x"
+WHERE id = x;
+
+--Get All Users order by email
+SELECT * FROM users
+ORDER BY email ASC;
+
+--Get All Products order by price
+SELECT * FROM products
+ORDER BY price ASC
+LIMIT 20
+OFFSET 0;
+
+--Get All Products
+SELECT * FROM products;
