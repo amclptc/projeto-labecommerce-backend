@@ -1,5 +1,5 @@
 Alterações e implementações:
-- continuei criando endpoints para automatizar a manipulação do meu data base;
+- refatorei os endpoints para torná-los mais robustos e preparados para lidar com erros;
 
 
 SOLO:
