@@ -2,6 +2,7 @@ import { users, products, purchases, createUser, getAllUsers, getProductById, qu
 import express, { Request, Response } from 'express'
 import cors from 'cors'
 import { DISCO_CATEGORIES, TUser } from "./types"
+import { type } from "os"
 
 
 
@@ -52,146 +53,391 @@ app.get("/ping", (req: Request, res: Response) => {
 //Labenu: crie endpoints para automatizar a manipulação dos dados do arquivo database.ts.
 //Get All Users:
 app.get("/users", (req: Request, res: Response) => {
-    res.status(200).send(users);
+    try {
+        res.status(200).send(users); 
+
+    } catch(error: any) {
+		console.log(error)
+
+		res.status(400).send(error.message)
+    }
 })
 
 //Get All Products:
 app.get("/products", (req: Request, res: Response) => {
-    res.status(200).send(products);
+    try {
+        res.status(200).send(products);
+
+    } catch (error: any) {
+        console.log(error)
+
+		res.status(400).send(error.message)
+    }
 })
 
 //Search Product by name:
 app.get("/product/search", (req: Request, res: Response) => {
-    const q = req.query.q as string;
-    const result = products.filter(product => product.name.toLowerCase().includes(q))
-    res.status(200).send(result)
+    try {
+        const q = req.query.q as string;
+        const result = products.filter(product => product.name.toLowerCase().includes(q))
+        
+        if(q.length < 1){
+            throw new Error("O termo pesquisado deve ter pelo menos 1 caractere.")
+        }
+        res.status(200).send(result)
+        
+    } catch (error: any) {
+        console.log(error)
+		res.status(400).send(error.message)
+    }
+
 })
 
 //Create User:
 app.post("/users",(req: Request, res: Response) => {
-    const id = req.body.id as string;
-    const email = req.body.email as string;
-    const password = req.body.password as string;
+    try {
+        const id = req.body.id as string;
+        const email = req.body.email as string;
+        const password = req.body.password as string;
+    
+        const newUser: TUser = {
+            id,
+            email,
+            password
+        }
 
-    const newUser: TUser = {
-        id,
-        email,
-        password
+        if(id !== undefined){
+            if(typeof id !== "string"){
+                return res.status(400).send("'id' deve ser uma string");
+            }
+        }
+
+        if(email !== undefined){
+            if(typeof email !== "string"){
+                return res.status(400).send("'id' deve ser uma string");
+            }
+        }
+
+        if(password !== undefined){
+            if(typeof password !== "string"){
+                return res.status(400).send("'id' deve ser uma string");
+            }
+        }
+
+        const idExists = users.find((user) => user.id === id)
+        if(idExists){
+            throw new Error("'id' já cadastrada")
+        }
+
+        const emailExists = users.find((user) => user.email === email)
+        if(emailExists){
+            throw new Error("'email' já cadastrado")
+        }
+
+        users.push(newUser);
+        res.status(201).send("Cadastro realizado com sucesso");
+        
+    } catch (error: any) {
+        console.log(error)
+		res.status(400).send(error.message)
     }
-
-    users.push(newUser);
-    res.status(201).send("Cadastro realizado com sucesso");
 })
 
 //Create Product:
 app.post("/products",(req: Request, res: Response) => {
-    const id = req.body.id as string;
-    const name = req.body.name as string;
-    const price = req.body.price as number;
-    const category = req.body.category as DISCO_CATEGORIES;
+    try {
+        const id = req.body.id as string;
+        const name = req.body.name as string;
+        const price = req.body.price as number;
+        const category = req.body.category as DISCO_CATEGORIES;
+    
+        const newProduct = {
+            id,
+            name,
+            price,
+            category
+        }
+        if(id !== undefined){
+            if(typeof id !== "string"){
+                return res.status(400).send("'id' deve ser uma string");
+            }
+        }
 
-    const newProduct = {
-        id,
-        name,
-        price,
-        category
+        if(name !== undefined){
+            if(typeof name !== "string"){
+                return res.status(400).send("'name' deve ser uma string");
+            }
+        }
+
+        if(price !== undefined){
+            if(typeof price !== "string"){
+                return res.status(400).send("'price' deve ser uma string");
+            }
+        }
+//PROBLEMA: NÃO CONSEGUI FAZER A VALIDAÇÃO DE CATEGORY COM ENUM:
+        if(category !== undefined){
+            if(typeof category !== "string"){
+                return res.status(400).send("'category' deve ser uma string");
+            }
+        }
+
+        const idExists = products.find((product) => product.id === id)
+        if(idExists){
+            throw new Error("'id' já cadastrada")
+        }
+
+        products.push(newProduct);
+        res.status(201).send("Produto cadastrado com sucesso");
+        
+    } catch (error: any) {
+        console.log(error)
+		res.status(400).send(error.message)
     }
-
-    products.push(newProduct);
-    res.status(201).send("Produto cadastrado com sucesso");
 })
 
 //Create Purchase:
 app.post("/purchases",(req: Request, res: Response) => {
-    const userId = req.body.userId as string;
-    const productId = req.body.productId as string;
-    const quantity = req.body.quantity as number;
-    const totalPrice = req.body.totalPrice as number;
+    try {
+        const userId = req.body.userId as string;
+        const productId = req.body.productId as string;
+        const quantity = req.body.quantity as number;
+        const totalPrice = req.body.totalPrice as number;
+    
+        const newPurchase = {
+            userId,
+            productId,
+            quantity,
+            totalPrice
+        }
+        if(userId !== undefined){
+            if(typeof userId !== "string"){
+                return res.status(400).send("'id do usuário' deve ser uma string")
+            }
+        }
 
-    const newPurchase = {
-        userId,
-        productId,
-        quantity,
-        totalPrice
+        if(productId !== undefined){
+            if(typeof productId !== "string"){
+                return res.status(400).send("'id do produto' deve ser uma string")
+            }
+        }
+
+        if(quantity !== undefined){
+            if(typeof quantity !== "number"){
+                return res.status(400).send("'quantidade' deve ser um number")
+            }
+        }
+
+        if(totalPrice !== undefined){
+            if(typeof totalPrice !== "number"){
+                return res.status(400).send("'preço total' deve ser um number")
+            }
+        }
+
+        const userExists = users.find((user) => user.id === userId)
+        if(!userExists){
+            throw new Error("usuário não cadastrado")
+        }
+
+        const productExists = products.find((product) => product.id === productId)
+        if(!productExists){
+            throw new Error("produto não cadastrado")
+        }
+
+//PROBLEMA: NÃO CONSEGUI FAZER A VALIDAÇÃO SE A SOMA DA QUANTIDADE E TOTAL DA COMPRA BATEM:
+        purchases.push(newPurchase);
+        res.status(201).send("Compra realizada com sucesso");
+
+    } catch (error: any) {
+        console.log(error)
+		res.status(400).send(error.message)
     }
-
-    purchases.push(newPurchase);
-    res.status(201).send("Compra realizada com sucesso");
 })
 
 //Labenu: continuar criando endpoints para automatizar a manipulação dos dados.
 //Get Products by id:
 app.get("/products/:id", (req: Request, res: Response) => {
-    const id = req.params.id as string
-    const result = products.find(product => product.id === id);
-    res.status(200).send(result);
+    try {
+        const id = req.params.id as string
+        const result = products.find(product => product.id === id);
+
+        if(!result){
+            res.statusCode = 404
+            throw new Error("produto não cadastrado")
+        }
+
+        res.status(200).send(result);
+
+    } catch (error: any) {
+        console.log(error)
+		res.send(error.message)
+    }
+
 });
 
 //Get User Purchases by User id:
 app.get("/users/:id/purchases", (req: Request, res: Response) => {
-    const id = req.params.id as string;
-    const result = purchases.filter(purchase => purchase.userId === id);
-    res.status(200).send(result);
+    try {
+        const id = req.params.id as string;
+        const result = purchases.filter(purchase => purchase.userId === id);
+
+        if(!result){
+            res.statusCode = 404
+            throw new Error("usuário não cadastrado")
+        }
+
+        res.status(200).send(result);
+    } catch (error: any) {
+        console.log(error)
+		res.send(error.message)
+    }
 });
 
 
 //Labenu: praticar o método DELETE, criando endpoints para automatizar a manipulação dos dados.
 //Delete User by id:
 app.delete("/users/:id", (req: Request, res: Response) => {
-    const id = req.params.id as string;
-    const userIndex = users.findIndex((user) => user.id === id);
-    if(userIndex >= 0) {
-        users.splice(userIndex, 1)
-    };
-    res.status(200).send("User apagado com sucesso!")
-    console.log(id)
+    try {
+        const id = req.params.id as string;
+        const userIndex = users.findIndex((user) => user.id === id);
+
+        if(userIndex >= 0) {
+            users.splice(userIndex, 1)
+        };
+
+        const result = users.find(user => user.id === id);
+        if(!result){
+            throw new Error("usuário não cadastrado")
+        }
+
+        res.status(200).send("User apagado com sucesso!")
+
+    } catch (error: any) {
+        console.log(error)
+		res.status(400).send(error.message)
+    }
 });
 
 //Delete Product by id:
 app.delete("/products/:id", (req: Request, res: Response) => {
-    const id = req.params.id as string;
-    const productIndex = products.findIndex((product) => product.id === id);
-    if(productIndex >= 0){
-        products.splice(productIndex, 1)
+    try {
+        const id = req.params.id as string;
+        const productIndex = products.findIndex((product) => product.id === id);
+
+        if(productIndex >= 0){
+            products.splice(productIndex, 1)
+        }
+
+        const result = products.find(product => product.id === id);
+        if(!result){
+            throw new Error("produto não cadastrado")
+        }
+
+        res.status(200).send("Produto apagado com sucesso!")
+        
+    } catch (error: any) {
+        console.log(error)
+		res.status(400).send(error.message)
     }
-    res.status(200).send("Produto apagado com sucesso!")
-    console.log(id)
-});
+    }
+);
 
 
 //Labenu: praticar o método PUT, criando endpoints para automatizar a manipulação dos dados.
 //Edit User by id:
 app.put("/users/:id", (req: Request, res: Response) => {
-    const id = req.params.id as string | undefined;
-    const email = req.body.email as string | undefined;
-    const password = req.body.password as string | undefined;
+    try {
+        const id = req.params.id as string | undefined;
+        const email = req.body.email as string | undefined;
+        const password = req.body.password as string | undefined;
+    
+        const user = users.find((user) => user.id === id)
+    
+        if(!user){
+            res.statusCode = 404
+            throw new Error("usuário não encontrado")
+        }
+        if(id !== undefined){
+            if(typeof id !== "string"){
+                return res.status(400).send("'id' deve ser uma string")
+            }
+        }
 
-    const user = users.find((user) => user.id === id)
+        if(email !== undefined){
+            if(typeof email !== "string"){
+                return res.status(400).send("'email' deve ser uma string")
+            }
+        }
 
-    if(user) {
-        user.id = id || user.id;
-        user.email = email || user.email;
-        user.password = password || user.password;
+        if(password !== undefined){
+            if(typeof password !== "string"){
+                return res.status(400).send("'password' deve ser uma string")
+            }
+        }
+
+        if(user) {
+            user.id = id || user.id;
+            user.email = email || user.email;
+            user.password = password || user.password;
+        }
+    
+        res.status(200).send("Cadastro atualizado com sucesso")
+        
+    } catch (error: any) {
+        console.log(error)
+		res.send(error.message)
     }
-
-    res.status(200).send("Cadastro atualizado com sucesso")
 })
 
 ////Edit Product by id:
 app.put("/products/:id", (req: Request, res: Response) => {
-    const id = req.params.id as string | undefined;
-    const name = req.body.name as string | undefined;
-    const price = req.body.price as number | undefined;
-    const category = req.body.category as DISCO_CATEGORIES | undefined;
+    try {
+        const id = req.params.id as string | undefined;
+        const name = req.body.name as string | undefined;
+        const price = req.body.price as number | undefined;
+        const category = req.body.category as DISCO_CATEGORIES | undefined;
+        
+        const product = products.find((product) => product.id === id);
+        
+        if(!product){
+            res.statusCode = 404
+            throw new Error("produto não cadastrado")
+        }
+
+        if(id !== undefined){
+            if(typeof id !== "string"){
+                return res.status(400).send("'id' deve ser uma string");
+            }
+        }
+
+        if(name !== undefined){
+            if(typeof name !== "string"){
+                return res.status(400).send("'name' deve ser uma string");
+            }
+        }
+
+        if(price !== undefined){
+            if(typeof price !== "number"){
+                return res.status(400).send("'price' deve ser um number")
+            }
+        }
+
+        if(category !== undefined){
+            if(typeof category !== "string"){
+                return res.status(400).send("'category' deve ser uma string")
+            }
+        }
+
+        if(product){
+            product.id = id || product.id;
+            product.name = name || product.name;
+            product.price = price || product.price;
+            product.category = category || product.category;
+        }
     
-    const product = products.find((product) => product.id === id);
+        res.status(200).send("Produto atualizado com sucesso");
 
-    if(product){
-        product.id = id || product.id;
-        product.name = name || product.name;
-        product.price = price || product.price;
-        product.category = category || product.category;
+    } catch (error: any) {
+        console.log(error)
+		res.send(error.message)
     }
-
-    res.status(200).send("Produto atualizado com sucesso");
 })
