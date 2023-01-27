@@ -2,9 +2,6 @@ import { users, products, purchases, createUser, getAllUsers, getProductById, qu
 import express, { Request, Response } from 'express'
 import cors from 'cors'
 import { DISCO_CATEGORIES, TUser } from "./types"
-import { type } from "os"
-
-
 
 //Labenu: coloque um console.log só para verificar se tudo funcionou.
 // console.log("Tudo funcionando!")
@@ -84,9 +81,10 @@ app.get("/product/search", (req: Request, res: Response) => {
         if(q.length < 1){
             throw new Error("O termo pesquisado deve ter pelo menos 1 caractere.")
         }
-        res.status(200).send(result)
         
-    } catch (error: any) {
+        res.status(200).send(result)
+    
+    }catch (error: any) {
         console.log(error)
 		res.status(400).send(error.message)
     }
@@ -170,8 +168,8 @@ app.post("/products",(req: Request, res: Response) => {
         }
 
         if(price !== undefined){
-            if(typeof price !== "string"){
-                return res.status(400).send("'price' deve ser uma string");
+            if(typeof price !== "number"){
+                return res.status(400).send("'price' deve ser um number");
             }
         }
 //PROBLEMA: NÃO CONSEGUI FAZER A VALIDAÇÃO DE CATEGORY COM ENUM:
@@ -309,7 +307,7 @@ app.delete("/users/:id", (req: Request, res: Response) => {
             throw new Error("usuário não cadastrado")
         }
 
-        res.status(200).send("User apagado com sucesso!")
+        res.status(200).send("usuário deletado com sucesso!")
 
     } catch (error: any) {
         console.log(error)
