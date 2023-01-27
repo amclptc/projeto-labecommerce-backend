@@ -39,8 +39,8 @@ app.get("/product/search", (req, res) => {
         const result = database_1.products.filter(product => product.name.toLowerCase().includes(q));
         if (q.length < 1) {
             throw new Error("O termo pesquisado deve ter pelo menos 1 caractere.");
+            res.status(200).send(result);
         }
-        res.status(200).send(result);
     }
     catch (error) {
         console.log(error);
@@ -57,14 +57,20 @@ app.post("/users", (req, res) => {
             email,
             password
         };
-        if (typeof id !== "string") {
-            return res.status(400).send("'id' deve ser uma string");
+        if (id !== undefined) {
+            if (typeof id !== "string") {
+                return res.status(400).send("'id' deve ser uma string");
+            }
         }
-        if (typeof email !== "string") {
-            return res.status(400).send("'id' deve ser uma string");
+        if (email !== undefined) {
+            if (typeof email !== "string") {
+                return res.status(400).send("'id' deve ser uma string");
+            }
         }
-        if (typeof password !== "string") {
-            return res.status(400).send("'id' deve ser uma string");
+        if (password !== undefined) {
+            if (typeof password !== "string") {
+                return res.status(400).send("'id' deve ser uma string");
+            }
         }
         const idExists = database_1.users.find((user) => user.id === id);
         if (idExists) {
@@ -94,17 +100,25 @@ app.post("/products", (req, res) => {
             price,
             category
         };
-        if (typeof id !== "string") {
-            return res.status(400).send("'id' deve ser uma string");
+        if (id !== undefined) {
+            if (typeof id !== "string") {
+                return res.status(400).send("'id' deve ser uma string");
+            }
         }
-        if (typeof name !== "string") {
-            return res.status(400).send("'name' deve ser uma string");
+        if (name !== undefined) {
+            if (typeof name !== "string") {
+                return res.status(400).send("'name' deve ser uma string");
+            }
         }
-        if (typeof price !== "string") {
-            return res.status(400).send("'price' deve ser uma string");
+        if (price !== undefined) {
+            if (typeof price !== "number") {
+                return res.status(400).send("'price' deve ser um number");
+            }
         }
-        if (typeof category !== "string") {
-            return res.status(400).send("'category' deve ser uma string");
+        if (category !== undefined) {
+            if (typeof category !== "string") {
+                return res.status(400).send("'category' deve ser uma string");
+            }
         }
         const idExists = database_1.products.find((product) => product.id === id);
         if (idExists) {
@@ -130,17 +144,25 @@ app.post("/purchases", (req, res) => {
             quantity,
             totalPrice
         };
-        if (typeof userId !== "string") {
-            return res.status(400).send("'id do usuário' deve ser uma string");
+        if (userId !== undefined) {
+            if (typeof userId !== "string") {
+                return res.status(400).send("'id do usuário' deve ser uma string");
+            }
         }
-        if (typeof productId !== "string") {
-            return res.status(400).send("'id do produto' deve ser uma string");
+        if (productId !== undefined) {
+            if (typeof productId !== "string") {
+                return res.status(400).send("'id do produto' deve ser uma string");
+            }
         }
-        if (typeof quantity !== "number") {
-            return res.status(400).send("'quantidade' deve ser um number");
+        if (quantity !== undefined) {
+            if (typeof quantity !== "number") {
+                return res.status(400).send("'quantidade' deve ser um number");
+            }
         }
-        if (typeof totalPrice !== "number") {
-            return res.status(400).send("'preço total' deve ser um number");
+        if (totalPrice !== undefined) {
+            if (typeof totalPrice !== "number") {
+                return res.status(400).send("'preço total' deve ser um number");
+            }
         }
         const userExists = database_1.users.find((user) => user.id === userId);
         if (!userExists) {
@@ -163,13 +185,14 @@ app.get("/products/:id", (req, res) => {
         const id = req.params.id;
         const result = database_1.products.find(product => product.id === id);
         if (!result) {
+            res.statusCode = 404;
             throw new Error("produto não cadastrado");
         }
         res.status(200).send(result);
     }
     catch (error) {
         console.log(error);
-        res.status(400).send(error.message);
+        res.send(error.message);
     }
 });
 app.get("/users/:id/purchases", (req, res) => {
@@ -177,13 +200,14 @@ app.get("/users/:id/purchases", (req, res) => {
         const id = req.params.id;
         const result = database_1.purchases.filter(purchase => purchase.userId === id);
         if (!result) {
+            res.statusCode = 404;
             throw new Error("usuário não cadastrado");
         }
         res.status(200).send(result);
     }
     catch (error) {
         console.log(error);
-        res.status(400).send(error.message);
+        res.send(error.message);
     }
 });
 app.delete("/users/:id", (req, res) => {
@@ -198,7 +222,7 @@ app.delete("/users/:id", (req, res) => {
         if (!result) {
             throw new Error("usuário não cadastrado");
         }
-        res.status(200).send("User apagado com sucesso!");
+        res.status(200).send("usuário deletado com sucesso!");
     }
     catch (error) {
         console.log(error);
@@ -230,16 +254,23 @@ app.put("/users/:id", (req, res) => {
         const password = req.body.password;
         const user = database_1.users.find((user) => user.id === id);
         if (!user) {
+            res.statusCode = 404;
             throw new Error("usuário não encontrado");
         }
-        if (typeof id !== "string") {
-            return res.status(400).send("'id' deve ser uma string");
+        if (id !== undefined) {
+            if (typeof id !== "string") {
+                return res.status(400).send("'id' deve ser uma string");
+            }
         }
-        if (typeof email !== "string") {
-            return res.status(400).send("'email' deve ser uma string");
+        if (email !== undefined) {
+            if (typeof email !== "string") {
+                return res.status(400).send("'email' deve ser uma string");
+            }
         }
-        if (typeof password !== "string") {
-            return res.status(400).send("'password' deve ser uma string");
+        if (password !== undefined) {
+            if (typeof password !== "string") {
+                return res.status(400).send("'password' deve ser uma string");
+            }
         }
         if (user) {
             user.id = id || user.id;
@@ -250,7 +281,7 @@ app.put("/users/:id", (req, res) => {
     }
     catch (error) {
         console.log(error);
-        res.status(400).send(error.message);
+        res.send(error.message);
     }
 });
 app.put("/products/:id", (req, res) => {
@@ -261,19 +292,28 @@ app.put("/products/:id", (req, res) => {
         const category = req.body.category;
         const product = database_1.products.find((product) => product.id === id);
         if (!product) {
+            res.statusCode = 404;
             throw new Error("produto não cadastrado");
         }
-        if (typeof id !== "string") {
-            return res.status(400).send("'id' deve ser uma string");
+        if (id !== undefined) {
+            if (typeof id !== "string") {
+                return res.status(400).send("'id' deve ser uma string");
+            }
         }
-        if (typeof name !== "string") {
-            return res.status(400).send("'name' deve ser uma string");
+        if (name !== undefined) {
+            if (typeof name !== "string") {
+                return res.status(400).send("'name' deve ser uma string");
+            }
         }
-        if (typeof price !== "number") {
-            return res.status(400).send("'price' deve ser um number");
+        if (price !== undefined) {
+            if (typeof price !== "number") {
+                return res.status(400).send("'price' deve ser um number");
+            }
         }
-        if (typeof category !== "string") {
-            return res.status(400).send("'category' deve ser uma string");
+        if (category !== undefined) {
+            if (typeof category !== "string") {
+                return res.status(400).send("'category' deve ser uma string");
+            }
         }
         if (product) {
             product.id = id || product.id;
@@ -285,7 +325,7 @@ app.put("/products/:id", (req, res) => {
     }
     catch (error) {
         console.log(error);
-        res.status(400).send(error.message);
+        res.send(error.message);
     }
 });
 //# sourceMappingURL=index.js.map
