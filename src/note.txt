@@ -1,7 +1,6 @@
 Alterações e implementações:
-- configurei a conexão dos arquivos sql;
-- criei e populei a tabela users;
-- criei e populei a tabela products;
+- criei a tabela pedidos;
+- simulei um endpoit de histórico de compras utilizando junção INNER JOIN ON;
 
 
 
@@ -11,8 +10,6 @@ DeleteUserById - o usuário é deletado mas aparece a mensagem de que ele não f
 DeleteProductById - o usuário é deletado mas aparece a mensagem de que ele não foi cadastrado.
 PostNewProduct - reclama quando ponho price como number mas funciona quando coloco como string.
 
-Problemas com SQL:
-- Não consegui o Get All Products versão 2 que retorna os produtos com preços dentro do intervalo mockado em ordem crescente.
 
 
 SOLO:
