@@ -2,6 +2,8 @@ import { users, products, purchases, createUser, getAllUsers, getProductById, qu
 import express, { Request, Response } from 'express'
 import cors from 'cors'
 import { DISCO_CATEGORIES, TUser } from "./types"
+import { knex } from "knex"
+import { db } from "./database/knex"
 
 //Labenu: coloque um console.log só para verificar se tudo funcionou.
 // console.log("Tudo funcionando!")
@@ -49,9 +51,10 @@ app.get("/ping", (req: Request, res: Response) => {
 
 //Labenu: crie endpoints para automatizar a manipulação dos dados do arquivo database.ts.
 //Get All Users:
-app.get("/users", (req: Request, res: Response) => {
+app.get("/users", async (req: Request, res: Response) => {
     try {
-        res.status(200).send(users); 
+        const result = await db.raw(`SELECT * FROM users;`)
+        res.status(200).send(result); 
 
     } catch(error: any) {
 		console.log(error)
@@ -61,9 +64,10 @@ app.get("/users", (req: Request, res: Response) => {
 })
 
 //Get All Products:
-app.get("/products", (req: Request, res: Response) => {
+app.get("/products", async (req: Request, res: Response) => {
     try {
-        res.status(200).send(products);
+        const result = await db.raw(`SELECT * FROM products;`)
+        res.status(200).send(result);
 
     } catch (error: any) {
         console.log(error)
@@ -73,14 +77,19 @@ app.get("/products", (req: Request, res: Response) => {
 })
 
 //Search Product by name:
-app.get("/product/search", (req: Request, res: Response) => {
+app.get("/product/search", async (req: Request, res: Response) => {
     try {
         const q = req.query.q as string;
-        const result = products.filter(product => product.name.toLowerCase().includes(q))
+        // const result = products.filter(product => product.name.toLowerCase().includes(q))
         
         if(q.length < 1){
             throw new Error("O termo pesquisado deve ter pelo menos 1 caractere.")
         }
+
+        const result = await db.raw(`
+            SELECT * FROM products
+            WHERE name = "${q}";
+            `)
         
         res.status(200).send(result)
     
@@ -92,7 +101,7 @@ app.get("/product/search", (req: Request, res: Response) => {
 })
 
 //Create User:
-app.post("/users",(req: Request, res: Response) => {
+app.post("/users", async (req: Request, res: Response) => {
     try {
         const id = req.body.id as string;
         const email = req.body.email as string;
@@ -132,7 +141,13 @@ app.post("/users",(req: Request, res: Response) => {
             throw new Error("'email' já cadastrado")
         }
 
-        users.push(newUser);
+        // users.push(newUser);
+        await db.raw(`
+            INSERT INTO users (id, email, password)
+            VALUES ("${id}", "${email}", "${password}");
+
+        `)
+
         res.status(201).send("Cadastro realizado com sucesso");
         
     } catch (error: any) {
@@ -142,7 +157,7 @@ app.post("/users",(req: Request, res: Response) => {
 })
 
 //Create Product:
-app.post("/products",(req: Request, res: Response) => {
+app.post("/products", async (req: Request, res: Response) => {
     try {
         const id = req.body.id as string;
         const name = req.body.name as string;
@@ -184,7 +199,12 @@ app.post("/products",(req: Request, res: Response) => {
             throw new Error("'id' já cadastrada")
         }
 
-        products.push(newProduct);
+        // products.push(newProduct);
+        await db.raw(`
+            INSERT INTO products(id, name, price, category)
+            VALUES ("${id}", "${name}", "${price}", "${category}");
+        `)
+        
         res.status(201).send("Produto cadastrado com sucesso");
         
     } catch (error: any) {
@@ -194,7 +214,7 @@ app.post("/products",(req: Request, res: Response) => {
 })
 
 //Create Purchase:
-app.post("/purchases",(req: Request, res: Response) => {
+app.post("/purchases", async(req: Request, res: Response) => {
     try {
         const userId = req.body.userId as string;
         const productId = req.body.productId as string;
@@ -242,7 +262,12 @@ app.post("/purchases",(req: Request, res: Response) => {
         }
 
 //PROBLEMA: NÃO CONSEGUI FAZER A VALIDAÇÃO SE A SOMA DA QUANTIDADE E TOTAL DA COMPRA BATEM:
-        purchases.push(newPurchase);
+        // purchases.push(newPurchase);
+        await db.raw(`
+            INSERT INTO purchases(userId, productId, quantity, totalPrice)
+            VALUES ("${userId}", "${productId}", "${quantity}", "${totalPrice}");
+        `)
+
         res.status(201).send("Compra realizada com sucesso");
 
     } catch (error: any) {
@@ -253,17 +278,23 @@ app.post("/purchases",(req: Request, res: Response) => {
 
 //Labenu: continuar criando endpoints para automatizar a manipulação dos dados.
 //Get Products by id:
-app.get("/products/:id", (req: Request, res: Response) => {
+app.get("/products/:id", async(req: Request, res: Response) => {
     try {
         const id = req.params.id as string
-        const result = products.find(product => product.id === id);
+        // const result = products.find(product => product.id === id);
 
-        if(!result){
-            res.statusCode = 404
-            throw new Error("produto não cadastrado")
-        }
+        // if(!result){
+        //     res.statusCode = 404
+        //     throw new Error("produto não cadastrado")
+        // }
 
+        const result = await db.raw(`
+            SELECT * FROM products
+            WHERE id = "${id}"
+        `)
         res.status(200).send(result);
+
+
 
     } catch (error: any) {
         console.log(error)
@@ -273,15 +304,20 @@ app.get("/products/:id", (req: Request, res: Response) => {
 });
 
 //Get User Purchases by User id:
-app.get("/users/:id/purchases", (req: Request, res: Response) => {
+app.get("/users/:id/purchases", async (req: Request, res: Response) => {
     try {
         const id = req.params.id as string;
-        const result = purchases.filter(purchase => purchase.userId === id);
+        // const result = purchases.filter(purchase => purchase.userId === id);
 
-        if(!result){
+        if(!id){
             res.statusCode = 404
             throw new Error("usuário não cadastrado")
         }
+
+        const result = await db.raw(`
+            SELECT * FROM users
+            WHERE userId = "${id}"
+        `)
 
         res.status(200).send(result);
     } catch (error: any) {
