@@ -53,7 +53,9 @@ app.get("/ping", (req: Request, res: Response) => {
 //Get All Users:
 app.get("/users", async (req: Request, res: Response) => {
     try {
-        const result = await db.raw(`SELECT * FROM users;`)
+        // const result = await db.raw(`SELECT * FROM users;`)
+        const result = await db.select("*").from("users");
+
         res.status(200).send(result); 
 
     } catch(error: any) {
@@ -66,7 +68,8 @@ app.get("/users", async (req: Request, res: Response) => {
 //Get All Products:
 app.get("/products", async (req: Request, res: Response) => {
     try {
-        const result = await db.raw(`SELECT * FROM products;`)
+        // const result = await db.raw(`SELECT * FROM products;`)
+        const result = await db.select("*").from("products");
         res.status(200).send(result);
 
     } catch (error: any) {
@@ -86,10 +89,12 @@ app.get("/product/search", async (req: Request, res: Response) => {
             throw new Error("O termo pesquisado deve ter pelo menos 1 caractere.")
         }
 
-        const result = await db.raw(`
-            SELECT * FROM products
-            WHERE name = "${q}";
-            `)
+        // const result = await db.raw(`
+        //     SELECT * FROM products
+        //     WHERE name = "${q}";
+        //     `)
+
+        const result = await db.select("*").from("products").where({name: q});
         
         res.status(200).send(result)
     
@@ -470,6 +475,19 @@ app.put("/products/:id", (req: Request, res: Response) => {
     
         res.status(200).send("Produto atualizado com sucesso");
 
+    } catch (error: any) {
+        console.log(error)
+		res.send(error.message)
+    }
+});
+
+//Get Purchase by Id:
+app.get("/purchases/:id", async (req: Request, res: Response) => {
+    try {
+        const id = req.params.id as string;
+        const result = await db.select("*").from("purchases").where({id: id});
+
+        res.status(200).send(result);
     } catch (error: any) {
         console.log(error)
 		res.send(error.message)
