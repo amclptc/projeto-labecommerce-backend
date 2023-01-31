@@ -15,7 +15,7 @@ Trata-se de uma API que guarda, em sua base de dados, informações de uma loja 
 - Delete Purchase by ID
 - Get Purchase by ID
 
-A documentação no Postman pode ser acessada aqui:
+A documentação no Postman pode ser acessada aqui: https://documenter.getpostman.com/view/24460766/2s935iv7C8
 
 🛠 Tecnologias e ferramentas:
 - Node.JS
