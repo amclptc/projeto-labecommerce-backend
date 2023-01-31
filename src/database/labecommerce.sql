@@ -29,7 +29,7 @@ VALUES
 ("d002", "Late Registration", 968, "Solo"),
 ("d003", "Graduation", 766, "Solo"),
 ("d004", "808s & Heartbreak", 5.268, "Solo"),
-("d005", "My Beautiful Dark Twisted Fantasy", 2.023, "Solo")
+("d005", "My Beautiful Dark Twisted Fantasy", 2.023, "Solo");
 
 --Get All Users
 SELECT * FROM users;
@@ -39,7 +39,7 @@ SELECT * FROM products;
 
 --Search Product by name
 SELECT * FROM products
-WHERE name = "The College Dropout";
+WHERE name = "Late Registration";
 
 --Create User
 INSERT INTO users(id, email, password)
@@ -51,7 +51,7 @@ VALUES ("d006", "Yeezus", 781, "Solo");
 
 --Get Products by id
 SELECT * FROM products
-WHERE id = "d006"
+WHERE id = "d002";
 
 --Delete User by id
 DELETE FROM users
@@ -83,7 +83,7 @@ OFFSET 0;
 
 --Get All Products 
 SELECT * FROM products
-WHERE price > 500 AND price < 1.000
+WHERE price > 10 AND price < 500
 ORDER BY price DESC;
 
 --Labenu: criação da tabela purchases:
@@ -92,11 +92,9 @@ CREATE TABLE purchases(
     total_price REAL NOT NULL,
     paid INTEGER NOT NULL, 
     delivered_at TEXT,
-    buyer_id TEXT UNIQUE NOT NULL,
+    buyer_id TEXT NOT NULL,
     FOREIGN KEY (buyer_id) REFERENCES users(id)
 );
-
-DROP TABLE purchases;
 
 INSERT INTO purchases(id, total_price, paid, delivered_at, buyer_id)
 VALUES
@@ -130,4 +128,13 @@ INNER JOIN purchases
 ON purchases_products.purchase_id = purchases.id
 INNER JOIN products
 ON purchases_products.product_id = products.id;
+
+
+DROP TABLE users;
+
+DROP TABLE products;
+
+DROP TABLE purchases;
+
+DROP TABLE purchases_products;
 
